@@ -14,15 +14,12 @@ class LSystem {
     turtleStack : Array<Turtle>;
 
   constructor() {
-    let startPos : vec3 = vec3.create();
-    vec3.set(startPos, 0, 0, 0);
-    let startOrient : vec3 = vec3.create();
-    vec3.set(startOrient, 0, 0, 1);
-    let scale : vec3 = vec3.create();
-    vec3.set(scale, 10, 10, 10);
-    this.turtle = new Turtle(startPos, startOrient, 0, scale);
+    let startPos : vec3 = vec3.fromValues(0, 0, 0);
+    let startOrient : vec3 = vec3.fromValues(0, 0, 1);
+    let moveScale : vec3 = vec3.fromValues(10, 10, 10);
+    this.turtle = new Turtle(startPos, startOrient, 0, moveScale);
 
-    this.iterations = 1;
+    this.iterations = 2;
     this.axiom = "F";
 
     this.expansion = new ExpansionRule();

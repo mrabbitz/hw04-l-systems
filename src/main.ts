@@ -9,6 +9,7 @@ import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 
 import LSystem from './LSystem/LSystem'
+import Turtle from './LSystem/Turtle'
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -30,27 +31,84 @@ function loadScene() {
   // offsets and gradiated colors for a 100x100 grid
   // of squares, even though the VBO data for just
   // one square is actually passed to the GPU
-  let offsetsArray = [];
-  let colorsArray = [];
-  let n: number = 100.0;
-  for(let i = 0; i < n; i++) {
-    for(let j = 0; j < n; j++) {
-      offsetsArray.push(i);
-      offsetsArray.push(j);
-      offsetsArray.push(0);
+  // let offsetsArray = [];
+  // let colorsArray = [];
+  // let n: number = 100.0;
+  // for(let i = 0; i < n; i++) {
+  //   for(let j = 0; j < n; j++) {
+  //     offsetsArray.push(i);
+  //     offsetsArray.push(j);
+  //     offsetsArray.push(0);
 
-      colorsArray.push(i / n);
-      colorsArray.push(j / n);
-      colorsArray.push(0.0);
-      colorsArray.push(1.0); // Alpha channel
-    }
-  }
-  let offsets: Float32Array = new Float32Array(offsetsArray);
-  let colors: Float32Array = new Float32Array(colorsArray);
-  square.setInstanceVBOs(offsets, colors);
-  square.setNumInstances(n * n); // grid of "particles"
+  //     colorsArray.push(i / n);
+  //     colorsArray.push(j / n);
+  //     colorsArray.push(1.0);
+  //     colorsArray.push(1.0); // Alpha channel
+  //   }
+  // }
+  // let offsets: Float32Array = new Float32Array(offsetsArray);
+  // let colors: Float32Array = new Float32Array(colorsArray);
+  // square.setInstanceVBOs(offsets, colors);
+  // square.setNumInstances(n * n); // grid of "particles"
 
   let lSystemTree = new LSystem();
+  let offsetsArray = [];
+  let orientationsArray = [];
+  let colorsArray = [];
+
+  offsetsArray.push(lSystemTree.turtle.position[0]);
+  offsetsArray.push(lSystemTree.turtle.position[1]);
+  offsetsArray.push(lSystemTree.turtle.position[2]);
+  orientationsArray.push(lSystemTree.turtle.orientation[0]);
+  orientationsArray.push(lSystemTree.turtle.orientation[1]);
+  orientationsArray.push(lSystemTree.turtle.orientation[2]);
+  colorsArray.push(1.0);
+  colorsArray.push(1.0);
+  colorsArray.push(1.0);
+  colorsArray.push(1.0); // Alpha channel
+
+  let n: number = 1;
+
+  console.log(lSystemTree.axiom);
+
+  for (let i = 0; i < lSystemTree.axiom.length; i++) {
+      let currChar : string = lSystemTree.axiom.charAt(i);
+      let func = lSystemTree.drawing.drawingRules.get(currChar);
+      if (func) {
+          func();
+          offsetsArray.push(lSystemTree.turtle.position[0]);
+          offsetsArray.push(lSystemTree.turtle.position[1]);
+          offsetsArray.push(lSystemTree.turtle.position[2]);
+          orientationsArray.push(lSystemTree.turtle.orientation[0]);
+          orientationsArray.push(lSystemTree.turtle.orientation[1]);
+          orientationsArray.push(lSystemTree.turtle.orientation[2]);
+          colorsArray.push(1.0);
+          colorsArray.push(1.0);
+          colorsArray.push(1.0);
+          colorsArray.push(1.0); // Alpha channel
+          n++;
+      }
+      else if (currChar == "[") {
+          lSystemTree.turtleStack.push(new Turtle(Object.assign({}, lSystemTree.turtle.position),
+                                                  Object.assign({}, lSystemTree.turtle.orientation),
+                                                  Object.assign({}, lSystemTree.turtle.recursionDepth),
+                                                  Object.assign({}, lSystemTree.turtle.moveScale)
+                                                  )
+                                      );
+          lSystemTree.turtle.recursionDepth++;
+      }
+      else if (currChar == "]") {
+          lSystemTree.turtle = lSystemTree.turtleStack.pop();
+          lSystemTree.drawing.setTurtle(lSystemTree.turtle);
+  }
+}
+
+
+  let offsets: Float32Array = new Float32Array(offsetsArray);
+  let colors: Float32Array = new Float32Array(colorsArray);
+  let orientations: Float32Array = new Float32Array(orientationsArray);
+  square.setInstanceVBOs(offsets, colors, orientations);
+  square.setNumInstances(n);
 }
 
 function main() {

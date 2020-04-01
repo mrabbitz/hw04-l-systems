@@ -7,14 +7,14 @@ class DrawingRule {
   constructor(turtle : Turtle) {
     this.drawingRules = new Map();
     this.drawingRules.set("F", turtle.moveForward.bind(turtle));
-    this.drawingRules.set("+", turtle.rotateZNeg30Degs.bind(turtle));
-    this.drawingRules.set("-", turtle.rotateZ30Degs.bind(turtle));
+    this.drawingRules.set("+", turtle.rotateXNeg30Degs.bind(turtle));
+    this.drawingRules.set("-", turtle.rotateX30Degs.bind(turtle));
   }
 
   setTurtle(turtle : Turtle) {
     this.drawingRules.set("F", turtle.moveForward.bind(turtle));
-    this.drawingRules.set("+", turtle.rotateZNeg30Degs.bind(turtle));
-    this.drawingRules.set("-", turtle.rotateZ30Degs.bind(turtle));
+    this.drawingRules.set("+", turtle.rotateXNeg30Degs.bind(turtle));
+    this.drawingRules.set("-", turtle.rotateX30Degs.bind(turtle));
   }
 }
 

@@ -22,8 +22,14 @@ class Turtle {
   rotateX30Degs() {
     vec3.rotateX(this.orientation, this.orientation, vec3.create(), 0.523599);
   }
+  rotateXNeg30Degs() {
+    vec3.rotateX(this.orientation, this.orientation, vec3.create(), -0.523599);
+  }
   rotateY30Degs() {
     vec3.rotateY(this.orientation, this.orientation, vec3.create(), 0.523599);
+  }
+  rotateYNeg30Degs() {
+    vec3.rotateY(this.orientation, this.orientation, vec3.create(), -0.523599);
   }
   rotateZ30Degs() {
     vec3.rotateZ(this.orientation, this.orientation, vec3.create(), 0.523599);
