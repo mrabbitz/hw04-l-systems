@@ -8,6 +8,8 @@ import Camera from './Camera';
 import {setGL} from './globals';
 import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 
+import LSystem from './LSystem/LSystem'
+
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
@@ -39,7 +41,7 @@ function loadScene() {
 
       colorsArray.push(i / n);
       colorsArray.push(j / n);
-      colorsArray.push(1.0);
+      colorsArray.push(0.0);
       colorsArray.push(1.0); // Alpha channel
     }
   }
@@ -47,6 +49,8 @@ function loadScene() {
   let colors: Float32Array = new Float32Array(colorsArray);
   square.setInstanceVBOs(offsets, colors);
   square.setNumInstances(n * n); // grid of "particles"
+
+  let lSystemTree = new LSystem();
 }
 
 function main() {
