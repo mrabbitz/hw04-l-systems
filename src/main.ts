@@ -22,6 +22,7 @@ let screenQuad: ScreenQuad;
 let time: number = 0.0;
 
 let _mesh: Mesh;
+let _mesh1: Mesh;
 
 function loadScene() {
   square = new Square();
@@ -32,6 +33,18 @@ function loadScene() {
   var objString = document.getElementById('my_cube.obj').innerHTML;
   _mesh = new Mesh(objString, vec3.fromValues(0, 0, 0));
   _mesh.create();
+
+  objString = document.getElementById('sphere.obj').innerHTML;
+  _mesh1 = new Mesh(objString, vec3.fromValues(0, 0, 0));
+  _mesh1.create();
+
+  let offsetsArray1 = [];
+  let headersArray1 = [];
+  let leftsArray1 = [];
+  let upsArray1 = [];
+  let scalesArray1 = [];
+  let colorsArray1 = [];
+  let n1: number = 0;
 
   let lSystemTree = new LSystem();
   let offsetsArray = [];
@@ -87,9 +100,9 @@ function loadScene() {
             scalesArray.push(lSystemTree.turtle.scale_whd[0]);
             scalesArray.push(lSystemTree.turtle.scale_whd[1]);
             scalesArray.push(lSystemTree.turtle.scale_whd[2]);
-            colorsArray.push(1.0);
-            colorsArray.push(1.0);
-            colorsArray.push(1.0);
+            colorsArray.push(0.4);
+            colorsArray.push(0.26);
+            colorsArray.push(0.13);
             colorsArray.push(1.0); // Alpha channel
             n++;
           }
@@ -105,6 +118,34 @@ function loadScene() {
           lSystemTree.turtle.shrinkBranch();
       }
       else if (currChar == "]") {
+
+        offsetsArray1.push(lSystemTree.turtle.position[0]);
+        offsetsArray1.push(lSystemTree.turtle.position[1]);
+        offsetsArray1.push(lSystemTree.turtle.position[2]);
+        headersArray1.push(lSystemTree.turtle.orientation[0]);
+        headersArray1.push(lSystemTree.turtle.orientation[1]);
+        headersArray1.push(lSystemTree.turtle.orientation[2]);
+        leftsArray1.push(lSystemTree.turtle.orientation[3]);
+        leftsArray1.push(lSystemTree.turtle.orientation[4]);
+        leftsArray1.push(lSystemTree.turtle.orientation[5]);
+        upsArray1.push(lSystemTree.turtle.orientation[6]);
+        upsArray1.push(lSystemTree.turtle.orientation[7]);
+        upsArray1.push(lSystemTree.turtle.orientation[8]);
+
+        let randomm: number = Math.random() + 0.5;
+        //let specialScales : vec3 = vec3.fromValues(randomm, randomm, randomm);
+
+        scalesArray1.push(randomm);
+        scalesArray1.push(randomm);
+        scalesArray1.push(randomm);
+        colorsArray1.push(1.0);
+        colorsArray1.push(0.0);
+        colorsArray1.push(0.0);
+        colorsArray1.push(1.0); // Alpha channel
+        n1++;
+
+
+
           lSystemTree.turtle = lSystemTree.turtleStack.pop();
           lSystemTree.drawing.setTurtle(lSystemTree.turtle);
   }
@@ -121,6 +162,14 @@ function loadScene() {
   }
 }
 
+let offsets1: Float32Array = new Float32Array(offsetsArray1);
+let colors1: Float32Array = new Float32Array(colorsArray1);
+let headers1: Float32Array = new Float32Array(headersArray1);
+let lefts1: Float32Array = new Float32Array(leftsArray1);
+let ups1: Float32Array = new Float32Array(upsArray1);
+let scales1: Float32Array = new Float32Array(scalesArray1);
+_mesh1.setInstanceVBOs(offsets1, colors1, headers1, lefts1, ups1, scales1);
+  _mesh1.setNumInstances(n1);
 
   let offsets: Float32Array = new Float32Array(offsetsArray);
   let colors: Float32Array = new Float32Array(colorsArray);
@@ -184,7 +233,7 @@ function main() {
     renderer.clear();
     renderer.render(camera, flat, [screenQuad]);
     renderer.render(camera, instancedShader, [
-      _mesh,
+      _mesh, _mesh1,
     ]);
     stats.end();
 
