@@ -7,7 +7,10 @@ abstract class Drawable {
   bufPos: WebGLBuffer;
   bufNor: WebGLBuffer;
   bufTranslate: WebGLBuffer;
-  bufRotate: WebGLBuffer;
+  bufHeader: WebGLBuffer;
+  bufLeft: WebGLBuffer;
+  bufUp: WebGLBuffer;
+  bufScale: WebGLBuffer;
   bufCol: WebGLBuffer;
   bufUV: WebGLBuffer;
 
@@ -16,7 +19,10 @@ abstract class Drawable {
   norGenerated: boolean = false;
   colGenerated: boolean = false;
   translateGenerated: boolean = false;
-  rotateGenerated: boolean = false;
+  headerGenerated: boolean = false;
+  leftGenerated: boolean = false;
+  upGenerated: boolean = false;
+  scaleGenerated: boolean = false;
   uvGenerated: boolean = false;
 
   numInstances: number = 0; // How many instances of this Drawable the shader program should draw
@@ -29,7 +35,10 @@ abstract class Drawable {
     gl.deleteBuffer(this.bufNor);
     gl.deleteBuffer(this.bufCol);
     gl.deleteBuffer(this.bufTranslate);
-    gl.deleteBuffer(this.bufRotate);
+    gl.deleteBuffer(this.bufHeader);
+    gl.deleteBuffer(this.bufLeft);
+    gl.deleteBuffer(this.bufUp);
+    gl.deleteBuffer(this.bufScale);
     gl.deleteBuffer(this.bufUV);
   }
 
@@ -57,9 +66,21 @@ abstract class Drawable {
     this.translateGenerated = true;
     this.bufTranslate = gl.createBuffer();
   }
-  generateRotate() {
-    this.rotateGenerated = true;
-    this.bufRotate = gl.createBuffer();
+  generateHeader() {
+    this.headerGenerated = true;
+    this.bufHeader = gl.createBuffer();
+  }
+  generateLeft() {
+    this.leftGenerated = true;
+    this.bufLeft = gl.createBuffer();
+  }
+  generateUp() {
+    this.upGenerated = true;
+    this.bufUp = gl.createBuffer();
+  }
+  generateScale() {
+    this.scaleGenerated = true;
+    this.bufScale = gl.createBuffer();
   }
 
   generateUV() {
@@ -101,11 +122,29 @@ abstract class Drawable {
     }
     return this.translateGenerated;
   }
-  bindRotate(): boolean {
-    if (this.rotateGenerated) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.bufRotate);
+  bindHeader(): boolean {
+    if (this.headerGenerated) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bufHeader);
     }
-    return this.rotateGenerated;
+    return this.headerGenerated;
+  }
+  bindLeft(): boolean {
+    if (this.leftGenerated) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bufLeft);
+    }
+    return this.leftGenerated;
+  }
+  bindUp(): boolean {
+    if (this.upGenerated) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bufUp);
+    }
+    return this.upGenerated;
+  }
+  bindScale(): boolean {
+    if (this.scaleGenerated) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.bufScale);
+    }
+    return this.scaleGenerated;
   }
 
   bindUV(): boolean {

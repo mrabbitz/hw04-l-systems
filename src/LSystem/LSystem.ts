@@ -1,7 +1,8 @@
 import {vec3} from 'gl-matrix';
-import Turtle from "./Turtle"
-import ExpansionRule from "./ExpansionRule"
-import DrawingRule from "./DrawingRule"
+import Turtle from "./Turtle";
+import ExpansionRule from "./ExpansionRule";
+import DrawingRule from "./DrawingRule";
+import {mat3} from 'gl-matrix';
 
 class LSystem {
     turtle : Turtle;
@@ -14,26 +15,25 @@ class LSystem {
     turtleStack : Array<Turtle>;
 
   constructor() {
-    let startPos : vec3 = vec3.fromValues(0, 0, 0);
-    let startOrient : vec3 = vec3.fromValues(0, 0, 1);
-    let moveScale : vec3 = vec3.fromValues(10, 10, 10);
-    this.turtle = new Turtle(startPos, startOrient, 0, moveScale);
+    // (pos: vec3, orient: vec3, recursion: number, scale: vec3)
+    // mat3: Heading, Left, Up orientations, column major
+    this.turtle = new Turtle(vec3.fromValues(0, 0, 0), mat3.fromValues(0, 1, 0, -1, 0, 0, 0, 0, 1), 0, vec3.fromValues(2, 3, 2));
 
-    this.iterations = 2;
-    this.axiom = "F";
+    this.iterations = 4;
+    this.axiom = "FABA";
 
     this.expansion = new ExpansionRule();
     this.drawing = new DrawingRule(this.turtle);
 
     let newAxiom : string = "";
-    let replace : string = "";
+    //let replace : string = "";
 
     for (let i = 0; i < this.iterations; i++) {
         for (let j = 0; j < this.axiom.length; j++) {
-            replace = this.expansion.expansionRules.get(this.axiom.charAt(j));
+            let replace = this.expansion.expansionRules.get(this.axiom.charAt(j));
             if (replace)    // will evaluate to true if replace is NOT: null, undefined, NaN, empty string (""), 0, false
             {
-                newAxiom += replace;
+                newAxiom += replace();
             }
             else            // accounts for brackets, plus and minus signs, etc.
             {
@@ -46,29 +46,6 @@ class LSystem {
       //console.log(this.axiom);
 
       this.turtleStack = new Array();
-
-    //   for (let i = 0; i < this.axiom.length; i++) {
-    //       let currChar : string = this.axiom.charAt(i);
-    //       let func = this.drawing.drawingRules.get(currChar);
-    //       if (func) {
-    //         //console.log("func");
-    //           func();
-    //           //console.log(this.turtle.position);
-    //           //console.log(this.turtle.orientation);
-    //       }
-    //       else if (currChar == "[") {
-    //         //console.log("[");
-    //           this.turtleStack.push(new Turtle(this.turtle.position, this.turtle.orientation, this.turtle.recursionDepth, this.turtle.moveScale));
-    //           this.turtle.recursionDepth++;
-    //           //console.log(this.turtle.position);
-    //       }
-    //       else if (currChar == "]") {
-    //         //console.log("]");
-    //           this.turtle = this.turtleStack.pop();
-    //           this.drawing.setTurtle(this.turtle);
-    //           //console.log(this.turtle.position);
-    //     }
-    //   }
   }
 }
 

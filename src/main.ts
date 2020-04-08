@@ -10,6 +10,7 @@ import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 
 import LSystem from './LSystem/LSystem'
 import Turtle from './LSystem/Turtle'
+import Mesh from './geometry/Mesh';
 
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
@@ -20,48 +21,41 @@ let square: Square;
 let screenQuad: ScreenQuad;
 let time: number = 0.0;
 
+let _mesh: Mesh;
+
 function loadScene() {
   square = new Square();
   square.create();
   screenQuad = new ScreenQuad();
   screenQuad.create();
 
-  // Set up instanced rendering data arrays here.
-  // This example creates a set of positional
-  // offsets and gradiated colors for a 100x100 grid
-  // of squares, even though the VBO data for just
-  // one square is actually passed to the GPU
-  // let offsetsArray = [];
-  // let colorsArray = [];
-  // let n: number = 100.0;
-  // for(let i = 0; i < n; i++) {
-  //   for(let j = 0; j < n; j++) {
-  //     offsetsArray.push(i);
-  //     offsetsArray.push(j);
-  //     offsetsArray.push(0);
-
-  //     colorsArray.push(i / n);
-  //     colorsArray.push(j / n);
-  //     colorsArray.push(1.0);
-  //     colorsArray.push(1.0); // Alpha channel
-  //   }
-  // }
-  // let offsets: Float32Array = new Float32Array(offsetsArray);
-  // let colors: Float32Array = new Float32Array(colorsArray);
-  // square.setInstanceVBOs(offsets, colors);
-  // square.setNumInstances(n * n); // grid of "particles"
+  var objString = document.getElementById('my_cube.obj').innerHTML;
+  _mesh = new Mesh(objString, vec3.fromValues(0, 0, 0));
+  _mesh.create();
 
   let lSystemTree = new LSystem();
   let offsetsArray = [];
-  let orientationsArray = [];
+  let headersArray = [];
+  let leftsArray = [];
+  let upsArray = [];
+  let scalesArray = [];
   let colorsArray = [];
 
   offsetsArray.push(lSystemTree.turtle.position[0]);
   offsetsArray.push(lSystemTree.turtle.position[1]);
   offsetsArray.push(lSystemTree.turtle.position[2]);
-  orientationsArray.push(lSystemTree.turtle.orientation[0]);
-  orientationsArray.push(lSystemTree.turtle.orientation[1]);
-  orientationsArray.push(lSystemTree.turtle.orientation[2]);
+  headersArray.push(lSystemTree.turtle.orientation[0]);
+  headersArray.push(lSystemTree.turtle.orientation[1]);
+  headersArray.push(lSystemTree.turtle.orientation[2]);
+  leftsArray.push(lSystemTree.turtle.orientation[3]);
+  leftsArray.push(lSystemTree.turtle.orientation[4]);
+  leftsArray.push(lSystemTree.turtle.orientation[5]);
+  upsArray.push(lSystemTree.turtle.orientation[6]);
+  upsArray.push(lSystemTree.turtle.orientation[7]);
+  upsArray.push(lSystemTree.turtle.orientation[8]);
+  scalesArray.push(lSystemTree.turtle.scale_whd[0]);
+  scalesArray.push(lSystemTree.turtle.scale_whd[1]);
+  scalesArray.push(lSystemTree.turtle.scale_whd[2]);
   colorsArray.push(1.0);
   colorsArray.push(1.0);
   colorsArray.push(1.0);
@@ -76,39 +70,66 @@ function loadScene() {
       let func = lSystemTree.drawing.drawingRules.get(currChar);
       if (func) {
           func();
-          offsetsArray.push(lSystemTree.turtle.position[0]);
-          offsetsArray.push(lSystemTree.turtle.position[1]);
-          offsetsArray.push(lSystemTree.turtle.position[2]);
-          orientationsArray.push(lSystemTree.turtle.orientation[0]);
-          orientationsArray.push(lSystemTree.turtle.orientation[1]);
-          orientationsArray.push(lSystemTree.turtle.orientation[2]);
-          colorsArray.push(1.0);
-          colorsArray.push(1.0);
-          colorsArray.push(1.0);
-          colorsArray.push(1.0); // Alpha channel
-          n++;
+          if (currChar == "F")
+          {
+            offsetsArray.push(lSystemTree.turtle.position[0]);
+            offsetsArray.push(lSystemTree.turtle.position[1]);
+            offsetsArray.push(lSystemTree.turtle.position[2]);
+            headersArray.push(lSystemTree.turtle.orientation[0]);
+            headersArray.push(lSystemTree.turtle.orientation[1]);
+            headersArray.push(lSystemTree.turtle.orientation[2]);
+            leftsArray.push(lSystemTree.turtle.orientation[3]);
+            leftsArray.push(lSystemTree.turtle.orientation[4]);
+            leftsArray.push(lSystemTree.turtle.orientation[5]);
+            upsArray.push(lSystemTree.turtle.orientation[6]);
+            upsArray.push(lSystemTree.turtle.orientation[7]);
+            upsArray.push(lSystemTree.turtle.orientation[8]);
+            scalesArray.push(lSystemTree.turtle.scale_whd[0]);
+            scalesArray.push(lSystemTree.turtle.scale_whd[1]);
+            scalesArray.push(lSystemTree.turtle.scale_whd[2]);
+            colorsArray.push(1.0);
+            colorsArray.push(1.0);
+            colorsArray.push(1.0);
+            colorsArray.push(1.0); // Alpha channel
+            n++;
+          }
       }
       else if (currChar == "[") {
           lSystemTree.turtleStack.push(new Turtle(Object.assign({}, lSystemTree.turtle.position),
                                                   Object.assign({}, lSystemTree.turtle.orientation),
                                                   Object.assign({}, lSystemTree.turtle.recursionDepth),
-                                                  Object.assign({}, lSystemTree.turtle.moveScale)
+                                                  Object.assign({}, lSystemTree.turtle.scale_whd)
                                                   )
                                       );
           lSystemTree.turtle.recursionDepth++;
+          lSystemTree.turtle.shrinkBranch();
       }
       else if (currChar == "]") {
           lSystemTree.turtle = lSystemTree.turtleStack.pop();
           lSystemTree.drawing.setTurtle(lSystemTree.turtle);
+  }
+  else if (currChar == "Y") {
+    currChar += lSystemTree.axiom.charAt(++i);        // Fetching associated number
+    let nextChar = lSystemTree.axiom.charAt(++i);
+    while (nextChar == "!") {
+      currChar += nextChar;
+      nextChar = lSystemTree.axiom.charAt(++i);
+    }
+    --i;
+    func = lSystemTree.drawing.drawingRules.get(currChar);
+    func();
   }
 }
 
 
   let offsets: Float32Array = new Float32Array(offsetsArray);
   let colors: Float32Array = new Float32Array(colorsArray);
-  let orientations: Float32Array = new Float32Array(orientationsArray);
-  square.setInstanceVBOs(offsets, colors, orientations);
-  square.setNumInstances(n);
+  let headers: Float32Array = new Float32Array(headersArray);
+  let lefts: Float32Array = new Float32Array(leftsArray);
+  let ups: Float32Array = new Float32Array(upsArray);
+  let scales: Float32Array = new Float32Array(scalesArray);
+  _mesh.setInstanceVBOs(offsets, colors, headers, lefts, ups, scales);
+  _mesh.setNumInstances(n);
 }
 
 function main() {
@@ -136,7 +157,7 @@ function main() {
   // Initial call to load scene
   loadScene();
 
-  const camera = new Camera(vec3.fromValues(50, 50, 10), vec3.fromValues(50, 50, 0));
+  const camera = new Camera(vec3.fromValues(0, 40, -250), vec3.fromValues(0, 40, 0));
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
@@ -163,7 +184,7 @@ function main() {
     renderer.clear();
     renderer.render(camera, flat, [screenQuad]);
     renderer.render(camera, instancedShader, [
-      square,
+      _mesh,
     ]);
     stats.end();
 
