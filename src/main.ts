@@ -132,7 +132,7 @@ function loadScene() {
         upsArray1.push(lSystemTree.turtle.orientation[7]);
         upsArray1.push(lSystemTree.turtle.orientation[8]);
 
-        let randomm: number = Math.random() + 0.5;
+        let randomm: number = Math.random() * 0.5 + 0.5;
         //let specialScales : vec3 = vec3.fromValues(randomm, randomm, randomm);
 
         scalesArray1.push(randomm);
@@ -211,7 +211,7 @@ function main() {
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(0.2, 0.2, 0.2, 1);
   gl.enable(gl.BLEND);
-  gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
+  //gl.blendFunc(gl.ONE, gl.ONE); // Additive blending
 
   const instancedShader = new ShaderProgram([
     new Shader(gl.VERTEX_SHADER, require('./shaders/instanced-vert.glsl')),
