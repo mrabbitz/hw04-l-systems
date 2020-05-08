@@ -1,4 +1,12 @@
 # Homework 4: L-systems
+Mike Rabbitz (mrabbitz)
+
+## Live Demo
+https://mrabbitz.github.io/hw04-l-systems/
+
+## Citations
+My one reference, which was heavily referenced for turtle orientation and movement methods as well as expansion rule experimentation, was listed as a reference at the bottom of the homework instructions:
+- [The Algorithmic Beauty of Plants](http://algorithmicbotany.org/papers/abop/abop-ch1.pdf)
 
 For this assignment, you will design a set of formal grammar rules to create
 a plant life using an L-system program. Once again, you will work from a
