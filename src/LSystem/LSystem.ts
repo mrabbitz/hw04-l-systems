@@ -14,13 +14,13 @@ class LSystem {
 
     turtleStack : Array<Turtle>;
 
-  constructor() {
+  constructor(axiom: string, iterations: number) {
     // (pos: vec3, orient: vec3, recursion: number, scale: vec3)
     // mat3: Heading, Left, Up orientations, column major
     this.turtle = new Turtle(vec3.fromValues(0, 0, 0), mat3.fromValues(0, 1, 0, -1, 0, 0, 0, 0, 1), 0, vec3.fromValues(2, 3, 2));
 
-    this.iterations = 4;
-    this.axiom = "FABA";
+    this.iterations = iterations;
+    this.axiom = axiom;
 
     this.expansion = new ExpansionRule();
     this.drawing = new DrawingRule(this.turtle);

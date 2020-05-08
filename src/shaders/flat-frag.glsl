@@ -101,7 +101,7 @@ float groundMap(vec3 pos)
 {
   vec3 pos1 = pos + vec3(0.0, 10.0, 0.0);
     float t = box(pos1, vec3(5000.0, 1.0, 5000.0));
-    t += sin(pos1.x/2.0)*sin(pos1.y)*sin(pos1.z/1.1);
+    //t += sin(pos1.x);
     float t2 = SphereSDF(pos + vec3(0.0, 100.0, 0.0), 100.0, vec3(0.0));
     return sminCubic(t, t2, 0.1);
 }
@@ -110,7 +110,7 @@ void groundMap(vec3 pos, out float t, out int objHit)
 {
   vec3 pos1 = pos + vec3(0.0, 10.0, 0.0);
     float t2 = box(pos1, vec3(5000.0, 1.0, 5000.0));
-    t2 += sin(pos1.x/2.0)*sin(pos1.y)*sin(pos1.z/1.1);
+    //t2 += sin(pos1.x);
     float t3 = SphereSDF(pos + vec3(0.0, 100.0, 0.0), 100.0, vec3(0.0));
     t = sminCubic(t2, t3, 0.1);
     objHit = 0;
@@ -144,7 +144,7 @@ vec3 computeNormal(vec3 pos)
 vec3 computeMaterial(int objHit, vec3 p, vec3 n) {
   vec3 color = vec3(0.0);
   if (objHit == 0) {
-    color = vec3(237.0, 201.0, 175.0)/255.0;
+    color = vec3(96., 128., 56.)/255.0;
   }
 
   vec3 sumLightColors = vec3(0.0);

@@ -15,7 +15,12 @@ import Mesh from './geometry/Mesh';
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
+  Axiom: 'FABA',
+  Iterations: 4
 };
+
+let prevAxiom: string = 'FABA';
+let prevIterations: number = 4;
 
 let square: Square;
 let screenQuad: ScreenQuad;
@@ -38,6 +43,11 @@ function loadScene() {
   _mesh1 = new Mesh(objString, vec3.fromValues(0, 0, 0));
   _mesh1.create();
 
+  loadLSystem(controls.Axiom, controls.Iterations);
+}
+
+function loadLSystem(axiom: string, iterations: number) {
+
   let offsetsArray1 = [];
   let headersArray1 = [];
   let leftsArray1 = [];
@@ -46,7 +56,7 @@ function loadScene() {
   let colorsArray1 = [];
   let n1: number = 0;
 
-  let lSystemTree = new LSystem();
+  let lSystemTree = new LSystem(axiom, iterations);
   let offsetsArray = [];
   let headersArray = [];
   let leftsArray = [];
@@ -135,6 +145,7 @@ function loadScene() {
         let randomm: number = Math.random() * 0.5 + 0.5;
         //let specialScales : vec3 = vec3.fromValues(randomm, randomm, randomm);
 
+        
         scalesArray1.push(randomm);
         scalesArray1.push(randomm);
         scalesArray1.push(randomm);
@@ -143,6 +154,7 @@ function loadScene() {
         colorsArray1.push(0.0);
         colorsArray1.push(1.0); // Alpha channel
         n1++;
+        
 
 
 
@@ -192,6 +204,9 @@ function main() {
 
   // Add controls to the gui
   const gui = new DAT.GUI();
+  var f0 = gui.addFolder('Characters F, A and B have expansion rules');
+  gui.add(controls, 'Axiom');
+  gui.add(controls, 'Iterations', 0, 8).step(1);
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -231,9 +246,18 @@ function main() {
     flat.setTime(time++);
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
+
+    if (controls.Axiom != prevAxiom || controls.Iterations != prevIterations)
+    {
+      prevAxiom = controls.Axiom;
+      prevIterations = controls.Iterations;
+      loadLSystem(prevAxiom, prevIterations);
+    }
+
+
     renderer.render(camera, flat, [screenQuad]);
     renderer.render(camera, instancedShader, [
-      _mesh, _mesh1,
+      _mesh1, _mesh,
     ]);
     stats.end();
 
